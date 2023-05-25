@@ -1,0 +1,24 @@
+<div class="login-container">
+    <div id="login-box">
+      <div class="cooplogo">
+        <img src="../../assets/Cooplogo.svg" alt="Coop logo">
+      </div>
+     
+
+      <form  (ngSubmit)="login(loginForm)" #loginForm="ngForm">
+        <span class="p-float-label">
+          <input id="float-input" type="text" name="username" name="username" ngModel class="form-control" placeholder="Username" pInputText required required> 
+          <label htmlFor="username">Username</label>
+        </span>
+  
+        <span class="p-float-label">
+          <input id="float-input" type="password"name="password" ngModel class="form-control" placeholder="Password" pInputText required> 
+          <label for="float-input">Password</label>
+        </span>
+      <button pButton type="submit" label="Login"   value="Login"></button>
+    </form>
+    </div>
+</div>
+
+
+

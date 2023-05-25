@@ -1,0 +1,23 @@
+<app-searchbar (searchValueChanging)="onSearchValueEntered($event)" class="d-flex"></app-searchbar>
+            <div class="d-flex justify-content-between" >
+                <table class="table table-striped" >
+                    <thead>
+                      <tr>
+                        <th scope="col">Logical Id</th>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Country</th>
+                        <th scope="col">Found From</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngIf="dataModel !=null">
+                        <!-- <th scope="row">{{dataModel.logicalId}}</th>
+                        <td> <span >{{dataModel.wholeName.replace("null", ".")}} <a href="customer-detail/{{dataModel.id}}" class="btn-primary">Detial</a></span></td>
+                        <td>{{dataModel.country}}</td>
+                        <td>{{dataModel.from +" Sanction List"}}</td>
+                        <td></td> -->
+
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>

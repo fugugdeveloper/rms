@@ -1,0 +1,32 @@
+.disp{
+    width: 50%;
+    height: 70vh;
+    padding: 15px;
+    margin: 50px auto 0 auto;
+    overflow: auto;
+    background: rgba(255, 255, 255, 0.41);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+    color: black;
+}
+
+.Acc,.Pn,.d,.t{
+   display:flex;
+   flex-direction:column;
+   align-items: center;
+   margin: 5px
+}
+.tovstack{
+    display:flex;
+    flex-direction: column;
+    align-items:center;}
+    .tohstack{
+    display:flex;
+    flex-direction:row;
+    justify-content:center;}
+    .dispContainer{
+        display: flex;
+        flex-direction: row;
+    }

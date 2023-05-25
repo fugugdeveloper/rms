@@ -1,0 +1,31 @@
+<app-searchbar (searchValueChanging)="onSearchValueEntered($event)" class="d-flex"></app-searchbar>
+            <div class="d-flex justify-content-between" >
+              <div class="dispContainer">
+                <div  class="disp" *ngIf="dataModel ==null" >
+                  <div class="norec" style="padding:0px; margin:0px;" *ngIf="sanctionData.length ==0">
+                    <h3 style="text-align:center; ">Record Doesn't Exist</h3>
+                  </div>
+                <table class="table table-striped" *ngIf="sanctionData.length !=0 && dataModel !=null">
+                    <thead>
+                      <tr>
+                        <th scope="col">Logical Id</th>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Country</th>
+                        <th scope="col">Found From</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                       
+                    
+                      <tr *ngFor="let number of sanctionData">
+                        <th scope="row">{{ sanctionData[number]['logicalId']}}</th>
+                        <td> <span >{{sanctionData[number]['wholeName']}} <a href="eu-sanction-detail/{{dataModel.foreignKeyId}}" class="btn-primary">Detial</a></span></td>
+                        <td>{{sanctionData[number]['country']}}</td>
+                        <td>{{sanctionData[number]['from'] +" Sanction List"}}</td>
+                        <td></td>
+
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>

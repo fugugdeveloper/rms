@@ -1,0 +1,5 @@
+<form class="d-flex justify-content-start m-5" style="width: 50%;" (ngSubmit)="onSearchValueChanged()">
+    <input class="form-control me-2"  [(ngModel)]="fullName" name="fullName" type="search" (input)="onSearchValueChanged()" placeholder="Search" aria-label="Search">
+    <button class="btn btn-primary" type="submit">Search</button>
+
+  </form>

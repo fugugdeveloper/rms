@@ -1,0 +1,144 @@
+
+<app-searchbar (searchValueChanging)="getEuSearch($event)" class="d-flex"></app-searchbar>
+<div class="d-flex justify-content-between">
+  <div class="d-flex justify-content-between">
+    <div class="dispContainer">
+      <div class="disp">
+        <div class="norec" style=" display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;" *ngIf="nameAliasList ===undefined">
+          <h4 style="text-align:center; ">No Data Entered</h4>
+
+        </div>
+        <h3 style="text-align: center;" *ngIf="len ===0">Customer Record Doesn't Exist!</h3>
+
+       
+        <!-- PrimeNg Table Start -->
+       
+        <div class="card">
+          <p-table [value]="nameAliasList"  [tableStyle]="{'min-width': '70rem'}" *ngIf="nameAliasList !==null && sanctionData.length !==0"
+          [paginator]="true" 
+          [rows]="8" >
+            <ng-template pTemplate="caption">
+              <div class="flex align-items-center justify-content-between">
+                European Union Customers Sanction Searching
+                <p-button (click)="reset()"icon="pi pi-refresh"></p-button>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Full Name</th>
+                <th>Gender</th>
+                <th>publication Url</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-nameAliasData *ngFor="let nameAliasData of nameAliasList">
+             
+              <tr>
+
+                <td> {{nameAliasData.wholeName}} 
+                  <p-button (click)="getCustomerEuDetail(nameAliasData.id)" styleClass="p-button-link" label="Show Detail"></p-button>
+                 
+                  
+
+                  <div class="dis" *ngIf="detailRetrieved">
+                   <div class="card" *ngFor="let dataModel of dataModelList; let i =index">
+                    
+                    <p-dialog header="Header"   [(visible)]="visible" [style]="{ width: '60vw' }" >
+                      <ng-template pTemplate="header" style="text-align: center;" >
+                        <span class="text-xl text-center font-bold">
+                          <!-- <span *ngIf="dataModel.firstName !==null && dataModel.lastName !==null">  {{dataModel.firstName +" "+dataModel.middleName+" "+dataModel.lastName }}</span> <span *ngIf="dataModel.firstName ===null && dataModel.lastName ===null">{{dataModel.wholeName}}</span>
+                        -->
+                        {{dataModel.wholeName}}
+                        </span>
+
+                      </ng-template>
+                    
+                     <ng-template pTemplate="content" *ngFor="let dataModel of dataModelList">
+                      <span><b>Full Name:</b> {{dataModel.wholeName}} In {{dataModel.nameLanguage}}</span><br>
+                      <p-divider></p-divider>
+                      <span><b>Details:</b><span *ngIf="dataModel.remark=== null"> No Customer Detail Available</span> <span *ngIf="dataModel.remark !==null"> {{dataModel.remark}}</span> </span><br>
+                      <p-divider></p-divider>
+                      <span><b>Citizenship:</b> <span *ngIf="dataModel.country=== null"> No Country Data</span> <span *ngIf="dataModel.country !==null"> {{dataModel.country}}</span> </span><br>
+                      <p-divider></p-divider>
+                      <span><b>Identification Type:</b> <span *ngIf="dataModel.identificationType=== null"> No I-Type Data</span> <span *ngIf="dataModel.identificationType !==null"> {{dataModel?.identificationType}}</span></span><br>
+                      <p-divider></p-divider>
+                      <span><b>Identification Type Code:</b>  <span *ngIf="dataModel.identificationTypeCode=== null"> No I-Type Code Data</span> <span *ngIf="dataModel.identificationTypeCode !==null"> {{dataModel?.identificationTypeCode}}</span></span><br>
+                      <p-divider></p-divider>
+                      <span><b>Passport Number:</b>  <span *ngIf="dataModel.passportNumber=== null"> No Passport Data</span> <span *ngIf="dataModel.passportNumber !==null"> {{dataModel.passportNumber}}</span> </span><br>
+                      <p-divider></p-divider>
+                      <span><b>Gender:</b> <span *ngIf="dataModel.gender=== null"> No Gender Data</span> <span *ngIf="dataModel.gender !==null"> {{dataModel.gender}}</span> </span><br>
+                    
+                      <span><b>Date of Birth:</b> <span *ngIf="dataModel.dateOfBirth=== null"> No BirthDate Data</span> <span *ngIf="dataModel.dateOfBirth !==null"> {{dataModel.dateOfBirth}}</span>   </span><br>
+                    </ng-template>
+                      <ng-template pTemplate="footer">
+                        <p-button icon="pi pi-check" (click)="visible = false" label="Ok" styleClass="p-button-text"></p-button>
+                      </ng-template>
+                      <p-divider></p-divider>
+             
+                    </p-dialog>
+                    </div>
+                  </div>
+                  
+                </td>
+                <td>{{nameAliasData.gender}}</td>
+                <td><a
+                    href="{{nameAliasData.regulationSummary.publicationUrl}}">{{nameAliasData.regulationSummary.publicationUrl}}</a>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div class="flex align-items-center justify-content-between">
+                In total there are {{nameAliasList ? nameAliasList.length : 0 }} Customers which their name Closely match with your searching value.
+              </div>
+            </ng-template>
+          </p-table>
+        </div> 
+        <!-- PrimeNg Table End -->
+        
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-table [value]="dataModelList" [tableStyle]="{'min-width': '60rem'}">
+  <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+          Products
+          <p-button icon="pi pi-refresh"></p-button>
+      </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+      <tr>
+          <th>Full Name</th>
+          <th>Name In Language</th>
+          <th>Details</th>
+          <th>Citizenship</th>
+          <th>Identification Type</th>
+          <th>Identification Type Code</th>
+          <th>Passport Number</th>
+          <th>Gender</th>
+          <th>Date of Birth</th>
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-dataModel>
+      <tr>
+          <td>{{dataModel.wholeName}}</td>
+          <td>{{dataModel.nameLanguage}}</td>
+          <td><span *ngIf="dataModel.remark=== null"> No Customer Detail Available</span> <span *ngIf="dataModel.remark !==null"> {{dataModel.remark}}</span> </td>
+          <td><span *ngIf="dataModel.country=== null"> No Country Data</span> <span *ngIf="dataModel.country !==null"> {{dataModel.country}}</span></td>
+          <td><span *ngIf="dataModel.identificationType=== null"> No I-Type Data</span> <span *ngIf="dataModel.identificationType !==null"> {{dataModel?.identificationType}}</span></td>
+          <td> <span *ngIf="dataModel.identificationTypeCode=== null"> No I-Type Code Data</span> <span *ngIf="dataModel.identificationTypeCode !==null"> {{dataModel?.identificationTypeCode}}</span></td>
+          <td><span *ngIf="dataModel.passportNumber=== null"> No Passport Data</span> <span *ngIf="dataModel.passportNumber !==null"> {{dataModel.passportNumber}}</span> </td>
+          <td><span *ngIf="dataModel.gender=== null"> No Gender Data</span> <span *ngIf="dataModel.gender !==null"> {{dataModel.gender}}</span></td>
+          <td><span *ngIf="dataModel.dateOfBirth=== null"> No BirthDate Data</span> <span *ngIf="dataModel.dateOfBirth !==null"> {{dataModel.dateOfBirth}}</span>   </span></td>
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+          In total there are {{dataModelList ? dataModelList.length : 0 }} different Names of This Customer.
+      </div>
+  </ng-template>
+</p-table>

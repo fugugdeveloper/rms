@@ -1,0 +1,156 @@
+
+<div class="d-flex justify-content-between">
+  <div class="d-flex justify-content-between">
+    <div class="dispContainer">
+      <div class="disp">
+        <div class="norec" style=" display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;" *ngIf="nameList ===undefined">
+          <h4 style="text-align:center; ">No Data Entered</h4>
+
+        </div>
+        <h3 style="text-align: center;" *ngIf="len ===0">Customer Record Doesn't Exist!</h3>
+
+
+        <!-- PrimeNg Table Start -->
+
+        <div class="card">
+          <p-table [value]="nameList" [tableStyle]="{'min-width': '70rem'}"
+            *ngIf="nameList !==null && sanctionData.length !==0" [paginator]="true" [rows]="2">
+            <ng-template pTemplate="caption">
+              <div class="flex align-items-center justify-content-between">
+                United Kingdom Customers Sanction Searching
+                <p-button icon="pi pi-refresh"></p-button>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Full Name</th>
+                <th>Name Type</th>
+                <th>Alias Strength</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-nameListData *ngFor="let nameListData of nameList">
+
+              <tr>
+
+                <td><span *ngIf="nameListData.name1 !=null">{{nameListData.name1 }} </span>&nbsp;
+                  <span *ngIf="nameListData.name2 !=null">{{nameListData.name2 }}</span>&nbsp;
+                  <span *ngIf="nameListData.name3 !=null">{{nameListData.name3 }}</span>&nbsp;
+                  <span *ngIf="nameListData.name4 !=null">{{nameListData.name4}}</span>&nbsp;
+                  <span *ngIf="nameListData.name5 !=null">{{nameListData.name5 }}</span>&nbsp;
+                  <span *ngIf="nameListData.name6 !=null">{{nameListData.name6 }}</span>&nbsp;
+
+
+                  <p-button (click)="getCustomerUkDetail(nameListData.id)" styleClass="p-button-link"
+                    label="Show Detail"></p-button>
+
+                  <modal id='{{nameListData.id +"-or"}}' class="justify-content-center">
+                    <div class="modal-header">
+                      <h5 class="modal-title" *ngIf="names !=undefined">
+                        <span *ngIf="names !=undefined"> In total there are {{names ?
+                          names.length : 0 }}
+                          different
+                          Names of This Customer.</span>
+                      </h5>
+                      <button type="button" class="btn-close" (click)="modalService.close();"></button>
+                    </div>
+                    <div class="modal-body">
+
+
+                      <p-table [value]="names" [tableStyle]="{'min-width': '100rem'}">
+
+
+                        <ng-template pTemplate="header">
+              <tr>
+                <th>Full Name</th>
+                <th>Non Lation Name</th>
+                <th>Regime Name</th>
+                <th>Nationality</th>
+                <th>National Identifier</th>
+                <th>Passport Number</th>
+                <th>Details</th>
+                <th>Gender</th>
+                <th>Date of Birth</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-name>
+              <tr>
+                <td>
+                  <span *ngIf="name.name1 !=null"> {{name.name1 }} </span><span *ngIf="name.name2 !=null">{{name.name2
+                    }}</span><span *ngIf="name.name3 !=null">{{name.name3 }}</span><span
+                    *ngIf="name.name4 !=null">{{name.name4}}</span><span *ngIf="name.name5 !=null">{{name.name5
+                    }}</span> <span *ngIf="name.name6 !=null"> {{name.name6 }} </span>
+                </td>
+                <td>{{responseDetail.regimeName}}</td>
+
+                <td >
+                  <span *ngFor="let nonLatinName of responseDetail.nonLatinNameList">
+                  <span *ngIf="nonLatinName.nameNonLatinScript !=null">{{nonLatinName.nameNonLatinScript}}</span>
+                </span>
+                </td>
+
+                <td>
+                  <span *ngFor="let nation of responseDetail.nationality">
+                    {{nation}}
+                  </span>
+                </td>
+                <td>
+                  <span *ngFor="let nationalIdentifier of responseDetail.nationalIdentifierList">
+                  <span
+                    *ngIf="nationalIdentifier.nationalIdentifierNumber !=null || nationalIdentifier.nationalIdentifierNumber !=undefined">National
+                    Identifier Number:{{nationalIdentifier.nationalIdentifierNumber}}</span> <span
+                    *ngIf="nationalIdentifier.nationalIdentifierNumber ==null || nationalIdentifier.nationalIdentifierNumber ==undefined">Data
+                    Not Found
+                  </span>
+                  <span
+                    *ngIf="nationalIdentifier.nationalIdentifierNumber !=null || nationalIdentifier.nationalIdentifierNumber !=undefined">National
+                    Identifier Additional Information:
+                    {{nationalIdentifier.nationalIdentifierAdditionalInformation}}</span><span
+                    *nfIf="nationalIdentifier.nationalIdentifierNumber ==null || nationalIdentifier.nationalIdentifierNumber ==undefined">Data
+                    Not Found</span>
+                  </span>
+                </td>
+                <td ><span *ngFor="let pass of responseDetail.passportList">
+                  <span *ngIf="pass.passportNumber !=null">Passport Number: {{pass.passportNumber }}</span> <span
+                    *ngIf="pass.passportNumber ==null">Data Not Found</span>
+                  </span>
+                </td>
+                <td>{{responseDetail.otherInformation}}</td>
+
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div class="flex align-items-center justify-content-between">
+                In total there are {{names ? names.length : 0 }} different Names of This
+                Customer.
+              </div>
+            </ng-template>
+          </p-table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modalService.close();">Close</button>
+        </div>
+        </modal>
+
+
+        </td>
+
+        <td>{{nameListData.nameType}}</td>
+        <td>{{nameListData.aliasStrength}}</td>
+        </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div class="flex align-items-center justify-content-between">
+            In total there are {{nameList ? nameList.length : 0 }} Customers which their name Closely
+            match with your searching value.
+          </div>
+        </ng-template>
+        </p-table>
+      </div>
+      <!-- PrimeNg Table End -->
+    </div>
+  </div>
+</div>
+</div>

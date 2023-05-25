@@ -1,0 +1,150 @@
+<!-- main app container -->
+
+
+
+
+
+
+
+<app-searchbar (searchValueChanging)="getEuSearch($event)" class="d-flex"></app-searchbar>
+<div class="d-flex justify-content-between">
+  <div class="d-flex justify-content-between">
+    <div class="dispContainer">
+      <div class="disp">
+        <div class="norec" style=" display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;" *ngIf="nameAliasList ===undefined">
+          <h4 style="text-align:center; ">No Data Entered</h4>
+
+        </div>
+        <h3 style="text-align: center;" *ngIf="len ===0">Customer Record Doesn't Exist!</h3>
+
+
+        <!-- PrimeNg Table Start -->
+
+        <div class="card">
+          <p-table [value]="nameAliasList" [tableStyle]="{'min-width': '70rem'}"
+            *ngIf="nameAliasList !==null && sanctionData.length !==0" [paginator]="true" [rows]="2">
+            <ng-template pTemplate="caption">
+              <div class="flex align-items-center justify-content-between">
+                European Union Customers Sanction Searching
+                <p-button (click)="reset()" icon="pi pi-refresh"></p-button>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Full Name</th>
+                <th>Gender</th>
+                <th>publication Url</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-nameAliasData *ngFor="let nameAliasData of nameAliasList">
+
+              <tr>
+
+                <td> {{nameAliasData.wholeName}}
+                
+                  <p-button (click)="getCustomerEuDetail(nameAliasData.id)" styleClass="p-button-link"
+                    label="Show Detail"> </p-button>
+
+                  <modal id="{{nameAliasData.id}}" class="justify-content-center">
+                    <div class="modal-header">
+                      <h5 class="modal-title">  In total there are {{dataModelList ? dataModelList.length : 0 }} different Names of This Customer.</h5>
+                      <button type="button" class="btn-close" (click)="modalService.close();"></button>
+                    </div>
+                    <div class="modal-body">
+
+                
+                      <p-table [value]="dataModelList" [tableStyle]="{'min-width': '100rem'}">
+                      
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Name In Language</th>
+                                <th>Details</th>
+                                <th>Citizenship</th>
+                                <th>Identification Type</th>
+                                <th>Identification Type Code</th>
+                                <th>Passport Number</th>
+                                <th>Gender</th>
+                                <th>Date of Birth</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-dataModel>
+                            <tr>
+                                <td>{{dataModel.wholeName}}</td>
+                                <td>     <span *ngIf="dataModel.nameLanguage ===''"></span>
+                                  <span *ngIf="dataModel.nameLanguage ==='FR'">French</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='AR'">Arabic</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='BG'">Bulgaria</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='EN'">EN</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='SV'">El Salvador</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='FA'">Persian</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='AC'">ANTIQUA AND BARBUDA </span>
+                                  <span *ngIf="dataModel.nameLanguage ==='AF'">AFGHANISTAN</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='GJ'">GRENADA</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='PC'">PITCAIRN</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='GL'">GREENLAND</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='PE'">PERU</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='AG'">ALGERIA</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='GP'">GUADELOUPE</span>
+                                  <span *ngIf="dataModel.nameLanguage ===''">NOT DEFINED</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='PF'">PARACEL ISLANDS</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='AL'">ALBANIA</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='GR'">GREECE</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='PG'">SPRATLY ISLANDS</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='AN'">ANDORRA</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='GS'">GILBERT ISLANDS</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='PK'">PAKISTAN</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='AO'">ANGOLA</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='GT'">GUATEMALA</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='PL'">POLAND</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='AQ'">AMERICAN SAMOA</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='GV'"> GUINEA</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='PN'">PANAMA</span>
+                                  <span *ngIf="dataModel.nameLanguage ==='RU'">RUSSIAN</span></td>
+                                <td><span *ngIf="dataModel.remark=== null"> No Customer Detail Available</span> <span *ngIf="dataModel.remark !==null"> {{dataModel.remark}}</span> </td>
+                                <td><span *ngIf="dataModel.country=== null"> No Country Data</span> <span *ngIf="dataModel.country !==null"> {{dataModel.country}}</span></td>
+                                <td><span *ngIf="dataModel.identificationType=== null"> No I-Type Data</span> <span *ngIf="dataModel.identificationType !==null"> {{dataModel?.identificationType}}</span></td>
+                                <td> <span *ngIf="dataModel.identificationTypeCode=== null"> No I-Type Code Data</span> <span *ngIf="dataModel.identificationTypeCode !==null"> {{dataModel?.identificationTypeCode}}</span></td>
+                                <td><span *ngIf="dataModel.passportNumber=== null"> No Passport Data</span> <span *ngIf="dataModel.passportNumber !==null"> {{dataModel.passportNumber}}</span> </td>
+                                <td><span *ngIf="dataModel.gender=== null"> No Gender Data</span> <span *ngIf="dataModel.gender !==null"> {{dataModel.gender}}</span></td>
+                                <td><span *ngIf="dataModel.dateOfBirth=== null"> No BirthDate Data</span> <span *ngIf="dataModel.dateOfBirth !==null"> {{dataModel.dateOfBirth}}</span> </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="summary">
+                            <div class="flex align-items-center justify-content-between">
+                                In total there are {{dataModelList ? dataModelList.length : 0 }} different Names of This Customer.
+                            </div>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="modalService.close();">Close</button>
+                    </div>
+                  </modal>
+
+
+
+                </td>
+                <td>{{nameAliasData.gender}}</td>
+                <td><a
+                    href="{{nameAliasData.regulationSummary.publicationUrl}}">{{nameAliasData.regulationSummary.publicationUrl}}</a>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div class="flex align-items-center justify-content-between">
+                In total there are {{nameAliasList ? nameAliasList.length : 0 }} Customers which their name Closely
+                match with your searching value.
+              </div>
+            </ng-template>
+          </p-table>
+        </div>
+
+        <!-- PrimeNg Table End -->
+      </div>
+    </div>
+  </div>
+</div>

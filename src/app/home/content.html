@@ -1,0 +1,589 @@
+<app-header></app-header>
+
+<div class="container-fluid">
+  <div class="row flex-nowrap">
+    <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-light">
+      <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 sidebar">
+        <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+          <span class="fs-5 d-none d-sm-inline">Menu</span>
+        </a>
+        <ul *ngIf="isLoggedIn()"
+          class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+          <li class="nav-item">
+            <a routerLink="/" class="nav-link align-middle px-0" *ngIf="isLoggedIn()">
+              <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+            </a>
+          </li>
+          <li *ngIf="isLoggedIn()">
+            <a href="/" class="nav-link px-0 align-middle">
+              <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Complainence</span>
+            </a>
+          </li>
+          <li *ngIf="isLoggedIn()">
+            <a href="/" class="nav-link px-0 align-middle">
+              <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">User Manual</span> </a>
+          </li>
+        </ul>
+        <hr>
+        <div class="dropdown pb-4" *ngIf="isLoggedIn()">
+          <a href="#" class="d-flex align-items-center text-primary text-decoration-none dropdown-toggle"
+            id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="favicon.ico" alt="favicon" width="30" height="30" class="rounded-circle">
+            <span class="d-none d-sm-inline mx-1">CoopBank</span>
+          </a>
+          <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" data-bs-toggle="dropdown">
+
+            <li>
+              <!-- <a class="dropdown-item" href="#">Sign out</a> -->
+              <button class="btn btn-primary" (click)="logout()">Sign Out</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <!-- <app-searchbar (searchValueChanging)="getSearchResult($event)" class="d-flex"></app-searchbar> -->
+      <form class="d-flex justify-content-start m-5" style="width: 50%;" #searchForm ="ngForm">
+        <input class="form-control me-2"  [(ngModel)]="fullName" name="fullName" type="search" (input)="getSearchResult(searchForm.value.fullName)" placeholder="Search" aria-label="Search">
+        <button class="btn btn-primary" type="submit">Search</button>
+    
+      </form>
+    
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <span class="card p-2 text-success" *ngIf="dataEuChecker === 0 && dataUnIndividualChecker >0 && dataUkChecker === 0
+                    && dataPepChecker === 0"> Found In UN Individual Sanction List</span>
+        </li>
+        <li class="nav-item">
+          <span class="card p-2 text-success" *ngIf="dataEuChecker > 0 && dataUnIndividualChecker ===0 && dataUkChecker === 0
+                    && dataPepChecker === 0"> Found In EU Sanction List</span>
+        </li>
+        <li class="nav-item">
+          <span class="card p-2 text-success" *ngIf="dataUkChecker > 0 && dataEuChecker ===0 
+                        && dataPepChecker === 0 && dataUnIndividualChecker ===0"> Found In UK Sanction List</span>
+
+
+        </li>
+        <li class="nav-item">
+          <span class="card p-2 text-success" *ngIf="dataUkChecker === 0 && dataEuChecker ===0 
+                    && dataUnIndividualChecker===0    && dataPepChecker===1"> Found In PEP List</span>
+
+        </li>
+     
+        <li class="nav-item">
+          <span class="card p-2"
+            *ngIf="dataUkChecker === -1 && dataEuChecker === -1 && dataPepChecker === -1 && dataUnIndividualChecker ===-1">Searching
+            is Not Initiated Yet! </span>
+        </li>
+        <li class="nav-item">
+          <span class="card p-2" *ngIf="dataUkChecker >0
+                         && dataEuChecker >0 && dataPepChecker >0 && dataUnIndividualChecker >0 
+                         && dataPepChecker >0">THIS CUSTOMER RECORD FOUND IN EU, PEP, UN & UK LIST </span>
+        </li>
+        <li class="nav-item">
+          <span class="card p-2" *ngIf="dataUkChecker ===0
+                         && dataEuChecker ===0 && dataPepChecker ===0 && dataUnIndividualChecker ===0 
+                         && dataPepChecker ===0">RECORD NOT
+                         FOUND IN ALL LISTS </span>
+        </li>
+
+      </ul>
+
+      <!-- UN Individual Search Start -->
+      <div class="card" *ngIf="dataUnIndividualChecker > 0">
+        <p-table [value]="unIndividualResponseDetailList" [tableStyle]="{'min-width': '70rem'}"
+          *ngIf="unIndividualResponseDetailList !=null" [paginator]="true" [rows]="4">
+          <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+             FOUND IN UNITED NATION INDIVIDUAL SANCTIN LIST
+              <p-button icon="pi pi-refresh"></p-button>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Full Name</th>
+              <th>Alias Name</th>
+              <th>Birth Place</th>
+              <th>Title</th>
+              <th>Gender</th>
+              <th>Name Original Script</th>
+              <th>Nationality</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-unIndividualResponseDetail *ngFor="let unIndividualResponseDetail of unIndividualResponseDetailList | upperFullName: fullName">
+
+            <tr>
+
+              <td>
+                {{unIndividualResponseDetail.firstName +" "+ unIndividualResponseDetail.secondName +" "+unIndividualResponseDetail.thirdName+" "+unIndividualResponseDetail.fourName}}
+
+                <p-button (click)="getUnIndividualCustomerDetail(unIndividualResponseDetail.id)" styleClass="p-button-link"
+                  label="Show Detail"></p-button>
+
+                <modal id='{{unIndividualResponseDetail.id +"-or"}}' class="justify-content-center">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <span *ngIf="pepResponseDetails !=undefined"> In total there are {{unIndividualResponseDetailList ?
+                        unIndividualResponseDetailList.length : 0 }}
+                        different
+                        Names of This Customer.</span>
+                    </h5>
+                    <button type="button" class="btn-close" (click)="modalService.close();"></button>
+                  </div>
+                  <div class="modal-body">
+
+
+                    <p-table [value]="unIndividualResponses" [tableStyle]="{'min-width': '100rem'}">
+
+
+                      <ng-template pTemplate="header">
+            <tr>
+              <th>Full Name </th>
+              <th>Alias Name</th>
+              <th>Birth Place</th>
+              <th>Title</th>
+              <th>Reference Number</th>
+              <th>Name Original Script</th>
+              <th>List Type</th>
+              <th>Nationality</th>
+              <th>Gender</th>
+              <th>Date of Birth</th>
+              <th>Type Of Document</th>
+              <th>Document State Provice</th>
+              <th>Country Of Issue</th>
+              <th>City of Issue</th>
+              <th>Date of Issue</th>
+              <th>Passport Number</th>
+              <th>Details</th>
+             
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-unIndividualResponse>
+            <tr>
+              <td>  {{unIndividualResponse.firstName +" "+ unIndividualResponse.secondName +" "+unIndividualResponse.thirdName+" "+unIndividualResponse.fourName}}</td>
+              <td>{{unIndividualResponse.aliasName}}</td>
+              <td>{{unIndividualResponse.countryOfBirth}}</td>
+              <td>{{unIndividualResponse.title}}</td>
+              <td>{{unIndividualResponse.referenceNumber}}</td>
+              <td>{{unIndividualResponse.nameOriginalScript}}</td>
+              <td>{{unIndividualResponse.nationality}}</td>
+              <td>{{unIndividualResponse.gender}}</td>
+              <td>{{unIndividualResponse.dateOfBirth}}</td>
+              <td>{{unIndividualResponse.typeOfDocument}}</td>
+              <td>{{unIndividualResponse.documentStateProvince}}</td>
+              <td>{{unIndividualResponse.countryOfIssue}}</td>
+              <td>{{unIndividualResponse.cityOfIssue}}</td>
+              <td>{{unIndividualResponse.dateOfIssue}}</td>
+              <td>{{unIndividualResponse.number}}</td>
+              <td>{{unIndividualResponse.comments1}}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+              In total there are {{unIndividualResponses ? unIndividualResponses.length : 0 }} different Names of This
+              Customer.
+            </div>
+          </ng-template>
+        </p-table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalService.close();">Close</button>
+      </div>
+      </modal>
+
+      </td>
+
+      <td>{{unIndividualResponseDetail?.aliasName}}</td>
+      <td>{{unIndividualResponseDetail?.title}}</td>
+      <td>{{unIndividualResponseDetail?.gender}}</td>
+      <td>{{unIndividualResponseDetail?.nameOriginalScript}}</td>
+      <td>{{unIndividualResponseDetail?.nationality}}</td>
+
+      </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+          In total there are {{unIndividualResponseDetailList ? unIndividualResponseDetailList.length : 0 }} Customers which their name
+          Closely
+          match with your searching value.
+        </div>
+      </ng-template>
+      </p-table>
+    </div>
+
+      <!-- UN Individual End -->
+      <!--PEP List Search  Start-->
+      <div class="card" *ngIf="dataPepChecker > 0">
+        <p-table [value]="pepResponseDetailList" [tableStyle]="{'min-width': '70rem'}"
+          *ngIf="pepResponseDetailList !=null" [paginator]="true" [rows]="4">
+          <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+              Found In Politically Exposed People List
+              <p-button icon="pi pi-refresh"></p-button>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Full Name</th>
+              <th>Position</th>
+              <th>Place Of Assignment</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-pepResponseDetail *ngFor="let pepResponseDetail of pepResponseDetailList">
+
+            <tr>
+
+              <td>
+                {{pepResponseDetail.nameInEng}}
+
+                <p-button (click)="getPepCustomerDetail(pepResponseDetail.id)" styleClass="p-button-link"
+                  label="Show Detail"></p-button>
+
+                <modal id='{{pepResponseDetail.id +"-or"}}' class="justify-content-center">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <span *ngIf="pepResponseDetails !=undefined"> In total there are {{pepResponseDetails ?
+                        pepResponseDetails.length : 0 }}
+                        different
+                        Names of This Customer.</span>
+                    </h5>
+                    <button type="button" class="btn-close" (click)="modalService.close();"></button>
+                  </div>
+                  <div class="modal-body">
+
+
+                    <p-table [value]="pepResponseDetails" [tableStyle]="{'min-width': '100rem'}">
+
+
+                      <ng-template pTemplate="header">
+            <tr>
+              <th>Full Name In English</th>
+              <th>Full Name In Ahmaric</th>
+              <th>Position</th>
+              <th>Place Of Assignment</th>
+              <th>Details</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-pepresponse>
+            <tr>
+              <td>{{pepresponse.nameInEng}}</td>
+              <td>{{pepresponse.nameInAmh}}</td>
+              <td>{{pepresponse.position}}</td>
+              <td>{{pepresponse.placeOfAssignment}}</td>
+              <td>{{pepresponse.details}}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+              In total there are {{pepResponseDetails ? pepResponseDetails.length : 0 }} different Names of This
+              Customer.
+            </div>
+          </ng-template>
+        </p-table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalService.close();">Close</button>
+      </div>
+      </modal>
+
+      </td>
+
+      <td>{{pepResponseDetail.position}}</td>
+      <td>{{pepResponseDetail.placeOfAssignment}}</td>
+      </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+          In total there are {{pepResponseDetailList ? pepResponseDetailList.length : 0 }} Customers which their name
+          Closely
+          match with your searching value.
+        </div>
+      </ng-template>
+      </p-table>
+    </div>
+
+    <!-- PEP List Search End -->
+
+    <!--EU List Search  Start-->
+
+    <div class="card" *ngIf="dataEuChecker > 0 ">
+      <p-table [value]="nameAliasList" [tableStyle]="{'min-width': '70rem'}"
+        *ngIf="nameAliasList !==null && sanctionData.length !==0" [paginator]="true" [rows]="2">
+        <ng-template pTemplate="caption">
+          <div class="flex align-items-center justify-content-between">
+            RECORD FOUND IN EUREPEAN UNION SANCTION LIST
+            <p-button (click)="reset()" icon="pi pi-refresh"></p-button>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Full Name</th>
+            <th>Gender</th>
+            <th>publication Url</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-nameAliasData *ngFor="let nameAliasData of nameAliasList">
+
+          <tr>
+
+            <td> {{nameAliasData.wholeName}}
+
+              <p-button (click)="getCustomerEuDetail(nameAliasData.id)" styleClass="p-button-link" label="Show Detail">
+              </p-button>
+
+              <modal id="{{nameAliasData.id}}" class="justify-content-center">
+                <div class="modal-header">
+                  <h5 class="modal-title"> In total there are {{dataModelList ? dataModelList.length : 0 }} different
+                    Names of This Customer.</h5>
+                  <button type="button" class="btn-close" (click)="modalService.close();"></button>
+                </div>
+                <div class="modal-body">
+
+
+                  <p-table [value]="dataModelList" [tableStyle]="{'min-width': '100rem'}">
+
+                    <ng-template pTemplate="header">
+          <tr>
+            <th>Full Name</th>
+            <th>Name In Language</th>
+            <th>Details</th>
+            <th>Citizenship</th>
+            <th>Identification Type</th>
+            <th>Identification Type Code</th>
+            <th>Passport Number</th>
+            <th>Gender</th>
+            <th>Date of Birth</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-dataModel>
+          <tr>
+            <td>{{dataModel.wholeName}}</td>
+            <td> <span *ngIf="dataModel.nameLanguage ===''"></span>
+              <span *ngIf="dataModel.nameLanguage ==='FR'">French</span>
+              <span *ngIf="dataModel.nameLanguage ==='AR'">Arabic</span>
+              <span *ngIf="dataModel.nameLanguage ==='BG'">Bulgaria</span>
+              <span *ngIf="dataModel.nameLanguage ==='EN'">EN</span>
+              <span *ngIf="dataModel.nameLanguage ==='SV'">El Salvador</span>
+              <span *ngIf="dataModel.nameLanguage ==='FA'">Persian</span>
+              <span *ngIf="dataModel.nameLanguage ==='AC'">ANTIQUA AND BARBUDA </span>
+              <span *ngIf="dataModel.nameLanguage ==='AF'">AFGHANISTAN</span>
+              <span *ngIf="dataModel.nameLanguage ==='GJ'">GRENADA</span>
+              <span *ngIf="dataModel.nameLanguage ==='PC'">PITCAIRN</span>
+              <span *ngIf="dataModel.nameLanguage ==='GL'">GREENLAND</span>
+              <span *ngIf="dataModel.nameLanguage ==='PE'">PERU</span>
+              <span *ngIf="dataModel.nameLanguage ==='AG'">ALGERIA</span>
+              <span *ngIf="dataModel.nameLanguage ==='GP'">GUADELOUPE</span>
+              <span *ngIf="dataModel.nameLanguage ===''">NOT DEFINED</span>
+              <span *ngIf="dataModel.nameLanguage ==='PF'">PARACEL ISLANDS</span>
+              <span *ngIf="dataModel.nameLanguage ==='AL'">ALBANIA</span>
+              <span *ngIf="dataModel.nameLanguage ==='GR'">GREECE</span>
+              <span *ngIf="dataModel.nameLanguage ==='PG'">SPRATLY ISLANDS</span>
+              <span *ngIf="dataModel.nameLanguage ==='AN'">ANDORRA</span>
+              <span *ngIf="dataModel.nameLanguage ==='GS'">GILBERT ISLANDS</span>
+              <span *ngIf="dataModel.nameLanguage ==='PK'">PAKISTAN</span>
+              <span *ngIf="dataModel.nameLanguage ==='AO'">ANGOLA</span>
+              <span *ngIf="dataModel.nameLanguage ==='GT'">GUATEMALA</span>
+              <span *ngIf="dataModel.nameLanguage ==='PL'">POLAND</span>
+              <span *ngIf="dataModel.nameLanguage ==='AQ'">AMERICAN SAMOA</span>
+              <span *ngIf="dataModel.nameLanguage ==='GV'"> GUINEA</span>
+              <span *ngIf="dataModel.nameLanguage ==='PN'">PANAMA</span>
+              <span *ngIf="dataModel.nameLanguage ==='RU'">RUSSIAN</span>
+            </td>
+            <td><span *ngIf="dataModel.remark=== null"> No Customer Detail Available</span> <span
+                *ngIf="dataModel.remark !==null"> {{dataModel.remark}}</span> </td>
+            <td><span *ngIf="dataModel.country=== null"> No Country Data</span> <span *ngIf="dataModel.country !==null">
+                {{dataModel.country}}</span></td>
+            <td><span *ngIf="dataModel.identificationType=== null"> No I-Type Data</span> <span
+                *ngIf="dataModel.identificationType !==null"> {{dataModel?.identificationType}}</span></td>
+            <td> <span *ngIf="dataModel.identificationTypeCode=== null"> No I-Type Code Data</span> <span
+                *ngIf="dataModel.identificationTypeCode !==null"> {{dataModel?.identificationTypeCode}}</span></td>
+            <td><span *ngIf="dataModel.passportNumber=== null"> No Passport Data</span> <span
+                *ngIf="dataModel.passportNumber !==null"> {{dataModel.passportNumber}}</span> </td>
+            <td><span *ngIf="dataModel.gender=== null"> No Gender Data</span> <span *ngIf="dataModel.gender !==null">
+                {{dataModel.gender}}</span></td>
+            <td><span *ngIf="dataModel.dateOfBirth=== null"> No BirthDate Data</span> <span
+                *ngIf="dataModel.dateOfBirth !==null"> {{dataModel.dateOfBirth}}</span> </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div class="flex align-items-center justify-content-between">
+            In total there are {{dataModelList ? dataModelList.length : 0 }} different Names of This Customer.
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modalService.close();">Close</button>
+    </div>
+    </modal>
+
+
+
+    </td>
+    <td>{{nameAliasData.gender}}</td>
+    <td><a
+        href="{{nameAliasData.regulationSummary.publicationUrl}}">{{nameAliasData.regulationSummary.publicationUrl}}</a>
+    </td>
+    </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        In total there are {{nameAliasList ? nameAliasList.length : 0 }} Customers which their name Closely
+        match with your searching value.
+      </div>
+    </ng-template>
+    </p-table>
+  </div>
+  <!-- EU List Search End -->
+
+
+  <!--UK List Search  Start-->
+  <div class="card" *ngIf="dataUkChecker > 0">
+    <p-table [value]="nameList" [tableStyle]="{'min-width': '70rem'}"
+      *ngIf="nameList !==null && sanctionData.length !==0" [paginator]="true" [rows]="2">
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          United Kingdom Customers Sanction Searching
+          <p-button icon="pi pi-refresh"></p-button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Full Name</th>
+          <th>Name Type</th>
+          <th>Alias Strength</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-nameListData *ngFor="let nameListData of nameList">
+
+        <tr>
+
+          <td><span *ngIf="nameListData.name1 !=null">{{nameListData.name1 }} </span>&nbsp;
+            <span *ngIf="nameListData.name2 !=null">{{nameListData.name2 }}</span>&nbsp;
+            <span *ngIf="nameListData.name3 !=null">{{nameListData.name3 }}</span>&nbsp;
+            <span *ngIf="nameListData.name4 !=null">{{nameListData.name4}}</span>&nbsp;
+            <span *ngIf="nameListData.name5 !=null">{{nameListData.name5 }}</span>&nbsp;
+            <span *ngIf="nameListData.name6 !=null">{{nameListData.name6 }}</span>&nbsp;
+
+
+            <p-button (click)="getCustomerUkDetail(nameListData.id)" styleClass="p-button-link"
+              label="Show Detail"></p-button>
+
+            <modal id='{{nameListData.id +"-or"}}' class="justify-content-center">
+              <div class="modal-header">
+                <h5 class="modal-title" *ngIf="names !=undefined">
+                  <span *ngIf="names !=undefined"> In total there are {{names ?
+                    names.length : 0 }}
+                    different
+                    Names of This Customer.</span>
+                </h5>
+                <button type="button" class="btn-close" (click)="modalService.close();"></button>
+              </div>
+              <div class="modal-body">
+
+
+                <p-table [value]="names" [tableStyle]="{'min-width': '100rem'}">
+
+
+                  <ng-template pTemplate="header">
+        <tr>
+          <th>Full Name</th>
+          <th>Non Lation Name</th>
+          <th>Regime Name</th>
+          <th>Nationality</th>
+          <th>National Identifier</th>
+          <th>Passport Number</th>
+          <th>Details</th>
+          <th>Gender</th>
+          <th>Date of Birth</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-name>
+        <tr>
+          <td>
+            <span *ngIf="name.name1 !=null"> {{name.name1 }} </span><span *ngIf="name.name2 !=null">{{name.name2
+              }}</span><span *ngIf="name.name3 !=null">{{name.name3 }}</span><span
+              *ngIf="name.name4 !=null">{{name.name4}}</span><span *ngIf="name.name5 !=null">{{name.name5
+              }}</span> <span *ngIf="name.name6 !=null"> {{name.name6 }} </span>
+          </td>
+          <td>{{responseDetail.regimeName}}</td>
+
+          <td>
+            <span *ngFor="let nonLatinName of responseDetail.nonLatinNameList">
+              <span *ngIf="nonLatinName.nameNonLatinScript !=null">{{nonLatinName.nameNonLatinScript}}</span>
+            </span>
+          </td>
+
+          <td>
+            <span *ngFor="let nation of responseDetail.nationality">
+              {{nation}}
+            </span>
+          </td>
+          <td>
+            <span *ngFor="let nationalIdentifier of responseDetail.nationalIdentifierList">
+              <span
+                *ngIf="nationalIdentifier.nationalIdentifierNumber !=null || nationalIdentifier.nationalIdentifierNumber !=undefined">National
+                Identifier Number:{{nationalIdentifier.nationalIdentifierNumber}}</span> <span
+                *ngIf="nationalIdentifier.nationalIdentifierNumber ==null || nationalIdentifier.nationalIdentifierNumber ==undefined">Data
+                Not Found
+              </span>
+              <span
+                *ngIf="nationalIdentifier.nationalIdentifierNumber !=null || nationalIdentifier.nationalIdentifierNumber !=undefined">National
+                Identifier Additional Information:
+                {{nationalIdentifier.nationalIdentifierAdditionalInformation}}</span><span
+                *nfIf="nationalIdentifier.nationalIdentifierNumber ==null || nationalIdentifier.nationalIdentifierNumber ==undefined">Data
+                Not Found</span>
+            </span>
+          </td>
+          <td><span *ngFor="let pass of responseDetail.passportList">
+              <span *ngIf="pass.passportNumber !=null">Passport Number: {{pass.passportNumber }}</span> <span
+                *ngIf="pass.passportNumber ==null">Data Not Found</span>
+            </span>
+          </td>
+          <td>{{responseDetail.otherInformation}}</td>
+
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+          In total there are {{names ? names.length : 0 }} different Names of This
+          Customer.
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modalService.close();">Close</button>
+  </div>
+  </modal>
+
+
+  </td>
+
+  <td>{{nameListData.nameType}}</td>
+  <td>{{nameListData.aliasStrength}}</td>
+  </tr>
+  </ng-template>
+  <ng-template pTemplate="summary">
+    <div class="flex align-items-center justify-content-between">
+      In total there are {{nameList ? nameList.length : 0 }} Customers which their name Closely
+      match with your searching value.
+    </div>
+  </ng-template>
+  </p-table>
+</div>
+
+<!-- UK List Search End -->
+
+</div>
+</div>
+</div>
+<div class="footer ">
+  <div>
+   <span>@2023 Cooperative Bank of Oromia. All Rights Reserved</span>
+  </div>
+  <div class="ms-auto">
+    <span>Designed by Core System</span>
+  </div>
+</div>
+
